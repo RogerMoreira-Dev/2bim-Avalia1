@@ -29,15 +29,49 @@ function emailDoToken(credencial) {
   }
 }
 
-// Chamada pelo Google Identity Services apos o login (data-callback).
-window.receberCredencial = (resposta) => {
+const botaoGoogle = document.getElementById("botao-google");
+
+// Recebe o id_token do Google, seja pela janela de login ou pelo redirecionamento.
+function receberCredencial(resposta) {
   token = resposta.credential;
   const email = emailDoToken(token);
   estadoLogin.textContent = email ? `Conectado como ${email}` : "Login realizado.";
   estadoLogin.classList.add("conectado");
   mensagem.textContent = "";
   campoNumero.focus();
-};
+}
+
+// O Brave bloqueia a janela de login do Google; nele o login usa
+// redirecionamento e volta pela rota /api/login.
+function iniciarGoogle() {
+  if (iniciarGoogle.pronto || !window.google?.accounts?.id) return;
+  iniciarGoogle.pronto = true;
+  google.accounts.id.initialize({
+    client_id: botaoGoogle.dataset.clientId,
+    callback: receberCredencial,
+    ux_mode: "brave" in navigator ? "redirect" : "popup",
+    login_uri: new URL("/api/login", location.origin).href,
+  });
+  google.accounts.id.renderButton(botaoGoogle, {
+    type: "standard",
+    shape: "pill",
+    theme: "filled_black",
+    size: "large",
+    text: "signin_with",
+    logo_alignment: "left",
+    locale: "pt-BR",
+  });
+}
+
+window.iniciarGoogle = iniciarGoogle;
+iniciarGoogle();
+
+// Volta do login por redirecionamento: o token chega no fragmento da URL.
+const credencialRedirecionada = new URLSearchParams(location.hash.slice(1)).get("credencial");
+if (credencialRedirecionada) {
+  history.replaceState(null, "", location.pathname + location.search);
+  receberCredencial({ credential: credencialRedirecionada });
+}
 
 function rolarPara(elemento) {
   elemento.scrollIntoView({ behavior: menosMovimento.matches ? "auto" : "smooth", block: "start" });
@@ -110,4 +144,25 @@ botaoOutro.addEventListener("click", () => {
   rolarPara(document.body);
   campoNumero.focus({ preventScroll: true });
   campoNumero.select();
+});
+
+// Modo escuro: inverte as cores da página e lembra a escolha.
+const botaoTema = document.getElementById("tema");
+
+function aplicarTema(escuro) {
+  if (escuro) document.documentElement.dataset.tema = "escuro";
+  else delete document.documentElement.dataset.tema;
+  botaoTema.setAttribute("aria-pressed", String(escuro));
+  botaoTema.setAttribute("aria-label", escuro ? "Desativar modo escuro" : "Ativar modo escuro");
+  botaoTema.title = escuro ? "Modo claro" : "Modo escuro";
+}
+
+aplicarTema(document.documentElement.dataset.tema === "escuro");
+
+botaoTema.addEventListener("click", () => {
+  const escuro = document.documentElement.dataset.tema !== "escuro";
+  aplicarTema(escuro);
+  try {
+    localStorage.setItem("tema", escuro ? "escuro" : "claro");
+  } catch {}
 });
