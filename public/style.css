@@ -275,6 +275,7 @@ input[type="number"]:focus {
   font-size: 1.05rem;
   font-weight: 600;
   white-space: nowrap;
+  text-decoration: none;
   cursor: pointer;
   transition: transform 0.6s var(--curva), box-shadow 0.6s var(--curva), background 0.6s var(--curva), opacity 0.3s;
 }
