@@ -22,6 +22,6 @@ Framework preset: `None`. Build command: vazio. Build output directory: `public`
 
 ## Identificação (preencha após o fork)
 
-Nome: 
-RA: 
-URL: https://
+Nome: Roger Costa Moreira
+RA: 2026109535
+URL: https://2bim-avalia1-2q8.pages.dev
