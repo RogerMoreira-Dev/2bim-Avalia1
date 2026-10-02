@@ -16,6 +16,14 @@
   <canvas id="fundo" aria-hidden="true"></canvas>
   <div class="halo" aria-hidden="true"></div>
 
+  <header id="topo" class="topo">
+    <a class="marca" href="#topo"><span class="marca-icone" aria-hidden="true"></span>Desenho Assinado</a>
+    <nav class="topo-nav" aria-label="Principal">
+      <a href="#como-funciona">Como funciona</a>
+      <a href="https://github.com/RogerMoreira-Dev/2bim-Avalia1" target="_blank" rel="noopener noreferrer">GitHub</a>
+    </nav>
+  </header>
+
   <main>
     <section class="hero">
       <span class="selo">Desenvolvimento Web Prático</span>
@@ -67,10 +75,61 @@
         <button id="outro" class="btn btn-secundario" type="button">Desenhar outro</button>
       </div>
     </section>
+
+    <section id="como-funciona" class="secao" aria-labelledby="como-funciona-titulo">
+      <span class="selo">Como funciona</span>
+      <h2 id="como-funciona-titulo" class="secao-titulo">Uma assinatura que não dá para falsificar</h2>
+      <p class="secao-texto">
+        O e-mail que assina a figura nunca é digitado. Ele vem do token emitido pelo Google
+        e é conferido pelo servidor antes de o desenho ser gerado.
+      </p>
+      <ol class="cartoes">
+        <li class="cartao">
+          <span class="cartao-numero">01</span>
+          <h3>Login com Google</h3>
+          <p>O Google Identity Services entrega ao navegador um <code>id_token</code> assinado com os dados da sua conta.</p>
+        </li>
+        <li class="cartao">
+          <span class="cartao-numero">02</span>
+          <h3>Verificação no servidor</h3>
+          <p>A Pages Function confere o token no Google e exige o Client ID do site e um e-mail verificado.</p>
+        </li>
+        <li class="cartao">
+          <span class="cartao-numero">03</span>
+          <h3>Desenho assinado</h3>
+          <p>240 pontos no círculo, cada ponto <em>i</em> ligado a (<em>k</em> · <em>i</em>) mod 240. O SVG volta assinado com o seu e-mail.</p>
+        </li>
+      </ol>
+    </section>
   </main>
 
   <footer class="rodape">
-    Desenho gerado no servidor (Cloudflare Pages Functions) · Identidade verificada pelo Google
+    <div class="rodape-conteudo">
+      <div class="rodape-marca">
+        <a class="marca" href="#topo"><span class="marca-icone" aria-hidden="true"></span>Desenho Assinado</a>
+        <p>Figuras matemáticas geradas no servidor e assinadas com a identidade verificada pelo Google.</p>
+      </div>
+      <nav class="rodape-coluna" aria-labelledby="rodape-navegacao">
+        <h2 id="rodape-navegacao">Navegação</h2>
+        <ul>
+          <li><a href="#topo">Início</a></li>
+          <li><a href="#como-funciona">Como funciona</a></li>
+          <li><a href="https://github.com/RogerMoreira-Dev/2bim-Avalia1" target="_blank" rel="noopener noreferrer">Código-fonte</a></li>
+        </ul>
+      </nav>
+      <div class="rodape-coluna">
+        <h2>Tecnologias</h2>
+        <ul>
+          <li>Cloudflare Pages Functions</li>
+          <li>Google Identity Services</li>
+          <li>WebGL e SVG</li>
+        </ul>
+      </div>
+    </div>
+    <div class="rodape-base">
+      <span>© 2026 Desenho Assinado · Desenvolvimento Web Prático</span>
+      <span>Desenvolvido por <a href="https://github.com/RogerMoreira-Dev" target="_blank" rel="noopener noreferrer">RogerMoreira-Dev</a></span>
+    </div>
   </footer>
 
   <noscript><p class="aviso-noscript">Ative o JavaScript para entrar com o Google e gerar o desenho.</p></noscript>

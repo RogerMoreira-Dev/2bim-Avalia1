@@ -2,8 +2,8 @@
 // Fundo animado de metal líquido: um shader de raymarching desenhado num
 // canvas WebGL que ocupa a tela inteira. Gotas de mercúrio se fundem e
 // seguem o ponteiro. A resolução se ajusta sozinha ao desempenho do
-// aparelho, e a animação para quando a aba fica oculta ou quando o
-// sistema pede menos movimento.
+// aparelho, a animação para quando a aba fica oculta e fica mais lenta
+// quando o sistema pede menos movimento.
 
 const VERTICES = `
 attribute vec2 aPosicao;
@@ -35,7 +35,7 @@ float uniaoSuave(float a, float b, float k) {
 }
 
 float cena(vec3 p) {
-  float t = uTempo * 0.12;
+  float t = uTempo * 0.3;
   vec2 alvo = (uPonteiro - 0.5) * vec2(6.5 * uEspalhamento, 4.2);
 
   // Gota que segue o ponteiro.
@@ -149,7 +149,7 @@ const canvas = document.getElementById("fundo");
 const menosMovimento = window.matchMedia("(prefers-reduced-motion: reduce)");
 
 // Escala da resolução interna em relação aos pixels CSS.
-const ESCALA_MIN = 0.3;
+const ESCALA_MIN = 0.22;
 const ESCALA_MAX = Math.min(window.devicePixelRatio || 1, 1.25);
 let escala = Math.min(0.75, ESCALA_MAX);
 let aumentosRestantes = 3;
@@ -158,14 +158,17 @@ let gl = null;
 let programa = null;
 let uniformes = {};
 let quadro = 0;
-let inicio = performance.now();
+
+// Tempo da animação em segundos. Avança mais devagar quando o sistema
+// pede menos movimento, em vez de congelar o fundo.
+let tempo = 20;
+let anterior = 0;
 
 const ponteiro = { x: 0.5, y: 0.5 };
 const alvo = { x: 0.5, y: 0.5 };
 let ultimoMovimento = -Infinity;
 
 // Medição de desempenho para a resolução adaptativa.
-let ultimoQuadro = 0;
 let somaIntervalos = 0;
 let quadrosMedidos = 0;
 
@@ -227,22 +230,47 @@ function redimensionar() {
   }
 }
 
+// Ajusta a resolução interna conforme o tempo médio entre quadros.
+function adaptar(intervalo) {
+  if (intervalo <= 0 || intervalo > 250) return;
+  somaIntervalos += intervalo;
+  quadrosMedidos++;
+  if (quadrosMedidos < 30) return;
+
+  const media = somaIntervalos / quadrosMedidos;
+  somaIntervalos = 0;
+  quadrosMedidos = 0;
+
+  if (media > 24 && escala > ESCALA_MIN) {
+    escala = Math.max(ESCALA_MIN, escala * 0.8);
+  } else if (media < 17.5 && escala < ESCALA_MAX && aumentosRestantes > 0) {
+    escala = Math.min(ESCALA_MAX, escala * 1.12);
+    aumentosRestantes--;
+  }
+}
+
 function desenhar(agora) {
   if (!gl || gl.isContextLost()) return;
-  redimensionar();
 
-  // Sem ponteiro recente, a gota principal passeia sozinha.
-  if (agora - ultimoMovimento > 4000) {
-    const t = agora * 0.00015;
-    alvo.x = 0.5 + Math.sin(t * 1.3) * 0.28;
-    alvo.y = 0.5 + Math.cos(t) * 0.22;
+  const intervalo = anterior ? agora - anterior : 0;
+  anterior = agora;
+  adaptar(intervalo);
+
+  const calmo = menosMovimento.matches;
+  tempo += (Math.min(intervalo, 250) / 1000) * (calmo ? 0.6 : 1);
+
+  // Sem ponteiro recente (ou com menos movimento), a gota principal passeia sozinha.
+  if (calmo || agora - ultimoMovimento > 4000) {
+    alvo.x = 0.5 + Math.sin(tempo * 0.45) * 0.28;
+    alvo.y = 0.5 + Math.cos(tempo * 0.33) * 0.22;
   }
   ponteiro.x += (alvo.x - ponteiro.x) * 0.06;
   ponteiro.y += (alvo.y - ponteiro.y) * 0.06;
 
+  redimensionar();
   const aspecto = canvas.width / canvas.height;
   gl.viewport(0, 0, canvas.width, canvas.height);
-  gl.uniform1f(uniformes.tempo, (agora - inicio) / 1000 + 20);
+  gl.uniform1f(uniformes.tempo, tempo);
   gl.uniform2f(uniformes.resolucao, canvas.width, canvas.height);
   gl.uniform2f(uniformes.ponteiro, ponteiro.x, ponteiro.y);
   gl.uniform1f(uniformes.espalhamento, Math.min(1, Math.max(0.35, aspecto / 1.6)));
@@ -251,40 +279,15 @@ function desenhar(agora) {
   if (!raiz.classList.contains("webgl-pronto")) raiz.classList.add("webgl-pronto");
 }
 
-// Ajusta a resolução interna conforme o tempo médio entre quadros.
-function adaptar(agora) {
-  if (ultimoQuadro) {
-    const intervalo = agora - ultimoQuadro;
-    if (intervalo < 250) {
-      somaIntervalos += intervalo;
-      quadrosMedidos++;
-    }
-  }
-  ultimoQuadro = agora;
-
-  if (quadrosMedidos < 45) return;
-  const media = somaIntervalos / quadrosMedidos;
-  somaIntervalos = 0;
-  quadrosMedidos = 0;
-
-  if (media > 24 && escala > ESCALA_MIN) {
-    escala = Math.max(ESCALA_MIN, escala * 0.82);
-  } else if (media < 17.5 && escala < ESCALA_MAX && aumentosRestantes > 0) {
-    escala = Math.min(ESCALA_MAX, escala * 1.12);
-    aumentosRestantes--;
-  }
-}
-
 function laco(agora) {
   quadro = requestAnimationFrame(laco);
-  adaptar(agora);
   desenhar(agora);
 }
 
 function parar() {
   cancelAnimationFrame(quadro);
   quadro = 0;
-  ultimoQuadro = 0;
+  anterior = 0;
   somaIntervalos = 0;
   quadrosMedidos = 0;
 }
@@ -292,13 +295,7 @@ function parar() {
 function retomar() {
   parar();
   if (!gl || gl.isContextLost() || document.hidden) return;
-  if (menosMovimento.matches) {
-    ponteiro.x = alvo.x = 0.5;
-    ponteiro.y = alvo.y = 0.5;
-    desenhar(inicio);
-  } else {
-    quadro = requestAnimationFrame(laco);
-  }
+  quadro = requestAnimationFrame(laco);
 }
 
 function iniciar() {
@@ -321,12 +318,7 @@ function iniciar() {
     ultimoMovimento = performance.now();
   }, { passive: true });
 
-  window.addEventListener("resize", () => {
-    if (menosMovimento.matches) retomar();
-  });
-
   document.addEventListener("visibilitychange", retomar);
-  menosMovimento.addEventListener?.("change", retomar);
 
   canvas.addEventListener("webglcontextlost", (evento) => {
     evento.preventDefault();
