@@ -12,7 +12,7 @@
   --ok: #067647;
   --sombra: 0 24px 70px rgba(0, 0, 0, 0.12);
   --curva: cubic-bezier(0.16, 1, 0.3, 1);
-  color-scheme: light;
+  color-scheme: only light;
 }
 
 *,
@@ -154,6 +154,69 @@ main {
   flex: 1;
 }
 
+/* Modo escuro (acessibilidade): inverte as cores da página inteira.
+   O desenho e o botão do Google são invertidos de volta para manter as cores originais. */
+
+html[data-tema="escuro"] {
+  filter: invert(1) hue-rotate(180deg);
+  background: #ffffff;
+}
+
+html[data-tema="escuro"] .moldura svg,
+html[data-tema="escuro"] .botao-google {
+  filter: invert(1) hue-rotate(180deg);
+}
+
+.topo-direita {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.tema {
+  display: inline-grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  flex: none;
+  padding: 0;
+  border-radius: 50%;
+  border: 1px solid var(--borda);
+  background: rgba(255, 255, 255, 0.55);
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+  color: var(--tinta);
+  cursor: pointer;
+  transition: background 0.3s var(--curva), transform 0.3s var(--curva);
+}
+
+.tema:hover {
+  background: rgba(255, 255, 255, 0.95);
+  transform: rotate(-12deg);
+}
+
+.tema svg {
+  width: 20px;
+  height: 20px;
+  fill: currentColor;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+.tema .icone-lua {
+  stroke: none;
+}
+
+.tema .icone-sol,
+html[data-tema="escuro"] .tema .icone-lua {
+  display: none;
+}
+
+html[data-tema="escuro"] .tema .icone-sol {
+  display: block;
+}
+
 /* Hero */
 
 .hero {
@@ -270,7 +333,7 @@ main {
   gap: 0.75rem 1rem;
 }
 
-.g_id_signin {
+.botao-google {
   min-height: 44px;
   min-width: 200px;
 }

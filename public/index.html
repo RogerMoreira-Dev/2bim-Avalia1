@@ -6,11 +6,15 @@
   <title>Desenho Assinado</title>
   <meta name="description" content="Escolha um número de 1 a 100 e receba uma figura em SVG gerada no servidor e assinada com o e-mail da sua conta Google.">
   <meta name="theme-color" content="#ffffff">
+  <meta name="color-scheme" content="only light">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3CradialGradient id='g' cx='35%25' cy='30%25' r='75%25'%3E%3Cstop offset='0' stop-color='%23fff'/%3E%3Cstop offset='.45' stop-color='%23a9b0ba'/%3E%3Cstop offset='1' stop-color='%23111'/%3E%3C/radialGradient%3E%3C/defs%3E%3Ccircle cx='32' cy='32' r='30' fill='url(%23g)'/%3E%3C/svg%3E">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
   <link rel="stylesheet" href="style.css">
+  <script>
+    try { if (localStorage.getItem("tema") === "escuro") document.documentElement.dataset.tema = "escuro"; } catch {}
+  </script>
 </head>
 <body>
   <canvas id="fundo" aria-hidden="true"></canvas>
@@ -18,10 +22,16 @@
 
   <header id="topo" class="topo">
     <a class="marca" href="#topo"><span class="marca-icone" aria-hidden="true"></span>Desenho Assinado</a>
+    <div class="topo-direita">
     <nav class="topo-nav" aria-label="Principal">
       <a href="#como-funciona">Como funciona</a>
       <a href="https://github.com/RogerMoreira-Dev/2bim-Avalia1" target="_blank" rel="noopener noreferrer">GitHub</a>
     </nav>
+    <button id="tema" class="tema" type="button" aria-pressed="false" aria-label="Ativar modo escuro" title="Modo escuro">
+      <svg class="icone-lua" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+      <svg class="icone-sol" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.5"/><path d="M12 1.5v3M12 19.5v3M1.5 12h3M19.5 12h3M4.6 4.6l2.1 2.1M17.3 17.3l2.1 2.1M4.6 19.4l2.1-2.1M17.3 6.7l2.1-2.1"/></svg>
+    </button>
+    </div>
   </header>
 
   <main>
@@ -35,23 +45,12 @@
         e assina a figura com o e-mail verificado da sua conta Google.
       </p>
 
-      <div id="g_id_onload"
-           data-client_id="480835708714-hddghopq8b9lhcs7fl7jbchcgum09sba.apps.googleusercontent.com"
-           data-callback="receberCredencial"
-           data-auto_prompt="false"></div>
-
       <form id="formulario" class="painel" novalidate>
         <div class="etapa">
           <span class="etapa-rotulo"><span class="etapa-numero">1</span> Conta Google</span>
           <div class="login">
-            <div class="g_id_signin"
-                 data-type="standard"
-                 data-shape="pill"
-                 data-theme="filled_black"
-                 data-size="large"
-                 data-text="signin_with"
-                 data-logo_alignment="left"
-                 data-locale="pt-BR"></div>
+            <div id="botao-google" class="botao-google"
+                 data-client-id="480835708714-hddghopq8b9lhcs7fl7jbchcgum09sba.apps.googleusercontent.com"></div>
             <p id="estado-login" class="estado" aria-live="polite">Entre com sua conta Google para assinar o desenho.</p>
           </div>
         </div>
@@ -134,7 +133,7 @@
 
   <noscript><p class="aviso-noscript">Ative o JavaScript para entrar com o Google e gerar o desenho.</p></noscript>
 
-  <script src="https://accounts.google.com/gsi/client" async></script>
+  <script src="https://accounts.google.com/gsi/client" async onload="window.iniciarGoogle &amp;&amp; window.iniciarGoogle()"></script>
   <script type="module" src="fundo.js"></script>
   <script type="module" src="script.js"></script>
 </body>
