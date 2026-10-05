@@ -24,4 +24,5 @@ Framework preset: `None`. Build command: vazio. Build output directory: `public`
 
 Nome: Roger Costa Moreira
 RA: 2026109535
+Turma: 2ESCN
 URL: https://2bim-avalia1-2q8.pages.dev

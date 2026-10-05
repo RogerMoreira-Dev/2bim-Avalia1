@@ -514,7 +514,6 @@ input[type="number"]:focus-visible {
   .painel,
   .selo,
   .topo-nav,
-  .cartao,
   .btn-secundario,
   #mensagem {
     background: rgba(255, 255, 255, 0.94);
@@ -522,12 +521,6 @@ input[type="number"]:focus-visible {
 }
 
 /* Telas pequenas */
-
-@media (max-width: 900px) {
-  .cartoes {
-    grid-template-columns: minmax(0, 1fr);
-  }
-}
 
 @media (max-width: 640px) {
   .hero {
@@ -540,13 +533,6 @@ input[type="number"]:focus-visible {
     font-size: 0.85rem;
   }
 
-  .secao {
-    padding: 3.5rem 16px 4.5rem;
-  }
-
-  .cartao {
-    padding: 1.5rem;
-  }
 
 
   .painel {
