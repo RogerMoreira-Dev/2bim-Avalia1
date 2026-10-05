@@ -37,49 +37,12 @@ body {
   min-height: 100svh;
   display: flex;
   flex-direction: column;
-  background: #ffffff;
+  background: #f4f5f7;
   color: var(--tinta);
   font-family: "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   line-height: 1.5;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
-}
-
-/* Fundo de metal líquido (WebGL) */
-
-#fundo {
-  position: fixed;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  display: block;
-  z-index: 0;
-  opacity: 0;
-  transition: opacity 1.2s var(--curva);
-}
-
-.webgl-pronto #fundo {
-  opacity: 1;
-}
-
-.sem-webgl #fundo {
-  display: none;
-}
-
-.sem-webgl body {
-  background:
-    radial-gradient(circle at 18% 72%, #c9ced6 0, #8a929d 12%, rgba(255, 255, 255, 0) 30%),
-    radial-gradient(circle at 82% 28%, #d8dce2 0, #7c848f 10%, rgba(255, 255, 255, 0) 26%),
-    #ffffff;
-  background-attachment: fixed;
-}
-
-.halo {
-  position: fixed;
-  inset: 0;
-  z-index: 1;
-  pointer-events: none;
-  background: radial-gradient(ellipse 62% 58% at 50% 46%, rgba(255, 255, 255, 0.62) 0%, rgba(255, 255, 255, 0.35) 45%, rgba(255, 255, 255, 0) 75%);
 }
 
 main,
@@ -512,8 +475,6 @@ input[type="number"]:focus-visible {
   display: block;
   width: 100%;
   height: auto;
-  /* Evita que o Chromium trate o SVG como opaco e deixe de pintar o fundo animado por baixo. */
-  opacity: 0.999;
 }
 
 .acoes {
