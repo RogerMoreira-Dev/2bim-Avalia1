@@ -16,23 +16,16 @@ jobs:
         with:
           node-version: 22
       - run: npm install -g @github/copilot
-      - name: Diagnostico temporario do Copilot CLI
-        continue-on-error: true
-        env:
-          COPILOT_GITHUB_TOKEN: ${{ secrets.COPILOT_PAT }}
-        run: |
-          [ -n "$COPILOT_GITHUB_TOKEN" ] && echo "::notice::COPILOT_PAT presente" || echo "::error::COPILOT_PAT vazio"
-          copilot --version || true
-          out=$(copilot -p "Responda apenas OK" -s --no-ask-user --model gpt-4.1 2>&1); code=$?
-          echo "::error::copilot saiu com $code: $(echo "$out" | tail -c 600 | tr '\n' ' ')"
       - name: Monta o prompt
+        env:
+          BASE_REF: ${{ github.base_ref }}
         run: |
           {
             echo "Revise o diff de um site com Cloudflare Pages Functions e D1."
             echo "Aponte, em português e em até 10 itens: segredos expostos,"
             echo "SQL montado por concatenação em vez de prepare().bind(), e erros de lógica."
             echo '```diff'
-            git diff origin/${{ github.base_ref }}...HEAD | head -c 20000
+            git diff "origin/$BASE_REF...HEAD" | head -c 20000
             echo '```'
           } > prompt.txt
       - id: ia

@@ -10,7 +10,7 @@ jobs:
       - uses: actions/checkout@v6
       - name: Procura segredos versionados
         run: |
-          if git grep -nE "GOCSPX-|client_secret *= *['\"][^'\"]+" -- . ':!*.md' ':!.github/workflows/'; then
+          if git grep -nE "GOCSPX-|client_secret *= *['\"][^'\"]+" -- . ':!*.md' ':!.github/workflows/ci.yml'; then
             echo "::error::Possível segredo no repositório"; exit 1
           fi
       - name: Aplica as migrações D1 em um SQLite local
