@@ -16,6 +16,15 @@ jobs:
         with:
           node-version: 22
       - run: npm install -g @github/copilot
+      - name: Diagnostico temporario do Copilot CLI
+        continue-on-error: true
+        env:
+          COPILOT_GITHUB_TOKEN: ${{ secrets.COPILOT_PAT }}
+        run: |
+          [ -n "$COPILOT_GITHUB_TOKEN" ] && echo "::notice::COPILOT_PAT presente" || echo "::error::COPILOT_PAT vazio"
+          copilot --version || true
+          out=$(copilot -p "Responda apenas OK" -s --no-ask-user 2>&1); code=$?
+          echo "::error::copilot saiu com $code: $(echo "$out" | tail -c 600 | tr '\n' ' ')"
       - name: Monta o prompt
         run: |
           {
