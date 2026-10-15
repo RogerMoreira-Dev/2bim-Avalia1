@@ -6,5 +6,5 @@ compatibility_date = "2026-10-01"
 [[d1_databases]]
 binding = "DB"
 database_name = "desenho-assinado-db"
-database_id = "PREENCHER_COM_O_ID_DO_D1"
+database_id = "06dfb48a-5441-4a9d-ad6b-f3e79ed05c0b"
 migrations_dir = "migrations"
