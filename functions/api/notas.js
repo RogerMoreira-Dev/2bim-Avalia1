@@ -7,7 +7,7 @@ export async function onRequest({ request, env }) {
   }
 
   const nome = new URL(request.url).searchParams.get("aluno") || "";
-  const { results } = await env.DB.prepare(`SELECT * FROM notas WHERE aluno = '${nome}'`).all();
+  const { results } = await env.DB.prepare("SELECT * FROM notas WHERE aluno = ?").bind(nome).all();
 
   return Response.json(results);
 }
