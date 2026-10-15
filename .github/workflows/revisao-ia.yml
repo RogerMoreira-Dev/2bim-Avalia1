@@ -23,7 +23,7 @@ jobs:
         run: |
           [ -n "$COPILOT_GITHUB_TOKEN" ] && echo "::notice::COPILOT_PAT presente" || echo "::error::COPILOT_PAT vazio"
           copilot --version || true
-          out=$(copilot -p "Responda apenas OK" -s --no-ask-user 2>&1); code=$?
+          out=$(copilot -p "Responda apenas OK" -s --no-ask-user --model gpt-4.1 2>&1); code=$?
           echo "::error::copilot saiu com $code: $(echo "$out" | tail -c 600 | tr '\n' ' ')"
       - name: Monta o prompt
         run: |
@@ -41,6 +41,7 @@ jobs:
           COPILOT_GITHUB_TOKEN: ${{ secrets.COPILOT_PAT }}
         with:
           prompt-file: prompt.txt
+          model: ""
           system-prompt: Você é um revisor de código objetivo.
       - name: Comenta no PR
         env:

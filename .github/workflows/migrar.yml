@@ -31,6 +31,7 @@ jobs:
           COPILOT_GITHUB_TOKEN: ${{ secrets.COPILOT_PAT }}
         with:
           prompt-file: resumo.txt
+          model: ""
           system-prompt: Você resume migrações de banco de dados de forma objetiva.
       - name: Escreve o resumo
         run: |
