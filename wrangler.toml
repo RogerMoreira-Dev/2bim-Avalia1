@@ -1,0 +1,10 @@
+# Usado pelo wrangler para as migrações do D1.
+# Sem pages_build_output_dir, o Cloudflare Pages ignora este arquivo no deploy.
+name = "2bim-avalia1"
+compatibility_date = "2026-10-01"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "desenho-assinado-db"
+database_id = "PREENCHER_COM_O_ID_DO_D1"
+migrations_dir = "migrations"
